@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mario come to Poland! 🥰✈️</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600&family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  /* Base & mobile fixes */
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; overflow-x: clip; }
+  body {
+    min-height: 100vh;
+    min-height: 100dvh;               /* evita “salti” della barra indirizzi */
+    display: grid;
+    place-items: center;
+    font-family: 'Baloo 2', cursive;
+    color: #fff;
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    position: relative;
+  }
+
+  /* Layer delle decorazioni: fissato al viewport, non altera la larghezza pagina */
+  .decor {
+    position: fixed;
+    inset: 0;
+    overflow: clip;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    width: min(92vw, 560px);
+    text-align: center;
+    background: rgba(255,255,255,0.15);
+    padding: clamp(20px, 4vw, 30px);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    position: relative;
+    z-index: 1;
+  }
+
+  h1 {
+    font-size: clamp(1.4rem, 5.5vw, 2.2rem);
+    margin: 0 0 10px;
+  }
+  .subtitle {
+    font-size: clamp(0.95rem, 3.5vw, 1.1rem);
+    margin-bottom: clamp(16px, 4vw, 25px);
+    font-family: 'Fredoka', sans-serif;
+  }
+
+  .countdown {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+  .time-box {
+    background: rgba(255,255,255,0.2);
+    border-radius: 12px;
+    padding: 12px;
+    flex: 1 1 70px;        /* permette l’andata a capo */
+    max-width: 110px;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+  }
+  .time-box span { display: block; }
+  .number { font-size: clamp(1.4rem, 7vw, 2rem); font-weight: 700; }
+  .label  { font-size: clamp(0.7rem, 3.2vw, 0.9rem); }
+
+  /* Aereo */
+  .plane {
+    position: absolute;
+    top: 15%;
+    left: -20vw;
+    font-size: clamp(2rem, 18vw, 80px);
+    animation: fly 12s linear infinite;
+  }
+  @keyframes fly {
+    0%   { transform: translate3d(0,0,0) rotate(10deg); }
+    100% { transform: translate3d(140vw,0,0) rotate(10deg); }
+  }
+
+  /* Nuvole */
+  .cloud {
+    position: absolute;
+    background: rgba(255,255,255,0.8);
+    border-radius: 50%;
+    animation: float 40s linear infinite;
+    filter: blur(1px);
+  }
+  @keyframes float {
+    0%   { transform: translate3d(0,0,0); }
+    100% { transform: translate3d(-140vw,0,0); }
+  }
+
+  /* Accessibilità: riduci movimento */
+  @media (prefers-reduced-motion: reduce) {
+    .plane, .cloud { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Decorazioni fissate (non causano overflow) -->
+<div class="decor" aria-hidden="true">
+  <div class="plane">✈️</div>
+  <div class="cloud" style="width:80px;height:80px;top:30%;left:90%;animation-duration:50s;"></div>
+  <div class="cloud" style="width:120px;height:120px;top:60%;left:70%;animation-duration:60s;"></div>
+  <div class="cloud" style="width:100px;height:100px;top:20%;left:50%;animation-duration:55s;"></div>
+  <div class="cloud" style="width:150px;height:150px;top:40%;left:30%;animation-duration:65s;"></div>
+</div>
+
+<div class="container">
+  <h1>Mario come to Poland! 🥰✈️</h1>
+  <div class="subtitle">Countdown to October 2, 2025 — 08:55</div>
+  <div class="countdown">
+    <div class="time-box">
+      <span id="days" class="number">00</span>
+      <span class="label">Days</span>
+    </div>
+    <div class="time-box">
+      <span id="hours" class="number">00</span>
+      <span class="label">Hours</span>
+    </div>
+    <div class="time-box">
+      <span id="minutes" class="number">00</span>
+      <span class="label">Minutes</span>
+    </div>
+    <div class="time-box">
+      <span id="seconds" class="number">00</span>
+      <span class="label">Seconds</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  const targetDate = new Date("2025-10-02T08:55:00+02:00").getTime();
+  const d = document.getElementById("days");
+  const h = document.getElementById("hours");
+  const m = document.getElementById("minutes");
+  const s = document.getElementById("seconds");
+
+  const pad = n => String(n).padStart(2,'0');
+
+  function updateCountdown() {
+    const diff = targetDate - Date.now();
+    if (diff <= 0) {
+      d.textContent = h.textContent = m.textContent = s.textContent = "00";
+      return;
+    }
+    const days = Math.floor(diff / 86400000);
+    const hours = Math.floor((diff % 86400000) / 3600000);
+    const minutes = Math.floor((diff % 3600000) / 60000);
+    const seconds = Math.floor((diff % 60000) / 1000);
+    d.textContent = days;
+    h.textContent = pad(hours);
+    m.textContent = pad(minutes);
+    s.textContent = pad(seconds);
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+</script>
+
+</body>
+</html>
